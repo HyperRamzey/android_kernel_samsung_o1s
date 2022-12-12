@@ -234,18 +234,6 @@ void __wake_up_pollfree(struct wait_queue_head *wq_head);
 #define wake_up_interruptible_sync_cl_poll(x, m)				\
 	__wake_up_sync_cl_key((x), TASK_INTERRUPTIBLE, poll_to_key(m))
 
-/**
- * wake_up_pollfree - signal that a polled waitqueue is going away
- * @wq_head: the wait queue head
- *
- * In the very rare cases where a ->poll() implementation uses a waitqueue whose
- * lifetime is tied to a task rather than to the 'struct file' being polled,
- * this function must be called before the waitqueue is freed so that
- * non-blocking polls (e.g. epoll) are notified that the queue is going away.
- *
- * The caller must also RCU-delay the freeing of the wait_queue_head, e.g. via
- * an explicit synchronize_rcu() or call_rcu(), or via SLAB_TYPESAFE_BY_RCU.
- */
 static inline void wake_up_pollfree(struct wait_queue_head *wq_head)
 {
 	/*
