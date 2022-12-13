@@ -1480,7 +1480,7 @@ struct dentry *mount_nodev(struct file_system_type *fs_type,
 }
 EXPORT_SYMBOL(mount_nodev);
 
-static int reconfigure_single(struct super_block *s,
+int reconfigure_single(struct super_block *s,
 			      int flags, void *data)
 {
 	struct fs_context *fc;
