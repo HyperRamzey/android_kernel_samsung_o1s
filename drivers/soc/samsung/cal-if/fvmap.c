@@ -43,7 +43,7 @@ static int margin_vpc;
 static int margin_mfc;
 static int margin_mfc1;
 static int margin_intsci;
-static int volt_offset_percent = -20;
+static int volt_offset_percent = -40;
 module_param(margin_mif, int, 0);
 module_param(margin_int, int, 0);
 module_param(margin_cpucl0, int, 0);
