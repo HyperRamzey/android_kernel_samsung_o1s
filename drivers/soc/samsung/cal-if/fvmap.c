@@ -125,39 +125,35 @@ static int get_vclk_id_from_margin_id(int margin_id)
 	return -EINVAL;
 }
 
-#define attr_percent(margin_id, type)								
-static ssize_t show_##type##_percent								
-(struct kobject *kobj, struct kobj_attribute *attr, char *buf)					
-{												
-	return snprintf(buf, PAGE_SIZE, "%d\n", percent_margin_table[margin_id]);		
-}												
-												
-static ssize_t store_##type##_percent								
-(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)		
-{												
-	int input, vclk_id;									
-												
-	if (!sscanf(buf, "%d", &input))								
-		return -EINVAL;									
-												
-	if (input < -100 || input > 100)							
-		return -EINVAL;									
-												
-	vclk_id = get_vclk_id_from_margin_id(margin_id);					
-	if (vclk_id == -EINVAL)									
-		return vclk_id;	
-	  // Apply a -5% offset only for cpucl0 and g3d VCLKs
-        if (vclk_id == VCLK_CPUCL0_ID || vclk_id == VCLK_G3D_ID) {
-           input -= 5;
-        }
-	percent_margin_table[margin_id] = input;						
-	cal_dfs_set_volt_margin(vclk_id | ACPM_VCLK_TYPE, input);				
-												
-	return count;										
-}												
-												
-static struct kobj_attribute type##_percent =							
-__ATTR(type##_percent, 0600,									
+#define attr_percent(margin_id, type)								\
+static ssize_t show_##type##_percent								\
+(struct kobject *kobj, struct kobj_attribute *attr, char *buf)					\
+{												\
+	return snprintf(buf, PAGE_SIZE, "%d\n", percent_margin_table[margin_id]);		\
+}												\
+												\
+static ssize_t store_##type##_percent								\
+(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)		\
+{												\
+	int input, vclk_id;									\
+												\
+	if (!sscanf(buf, "%d", &input))								\
+		return -EINVAL;									\
+												\
+	if (input < -100 || input > 100)							\
+		return -EINVAL;									\
+												\
+	vclk_id = get_vclk_id_from_margin_id(margin_id);					\
+	if (vclk_id == -EINVAL)									\
+		return vclk_id;									\
+	percent_margin_table[margin_id] = input;						\
+	cal_dfs_set_volt_margin(vclk_id | ACPM_VCLK_TYPE, input);				\
+												\
+	return count;										\
+}												\
+												\
+static struct kobj_attribute type##_percent =							\
+__ATTR(type##_percent, 0600,									\
 	show_##type##_percent, store_##type##_percent)
 
 attr_percent(MARGIN_MIF, mif_margin);
@@ -544,7 +540,7 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
 
 		if (volt_offset_percent) {
 			if ((volt_offset_percent < 100) && (volt_offset_percent > -100)) {
-				percent_margin_table[i] = volt_offset_percent;
+				percent_margin_table[i] = volt_offset_percent - 10; // -10% offset
 				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, volt_offset_percent);
 			}
 		}
