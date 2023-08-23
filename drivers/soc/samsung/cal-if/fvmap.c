@@ -64,7 +64,7 @@ module_param(margin_vpc, int, 0);
 module_param(margin_mfc, int, 0);
 module_param(margin_mfc1, int, 0);
 module_param(margin_intsci, int, 0);
-module_param(volt_offset_percent, int, 0);
+module_param(volt_offset_percent, int, -20);
 
 void margin_table_init(void)
 {
@@ -540,7 +540,7 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
 
 		if (volt_offset_percent) {
 			if ((volt_offset_percent < 100) && (volt_offset_percent > -100)) {
-				percent_margin_table[i] = volt_offset_percent - 10; // -10% offset
+				percent_margin_table[i] = volt_offset_percent; // -20% offset
 				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, volt_offset_percent);
 			}
 		}
